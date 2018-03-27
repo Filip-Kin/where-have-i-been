@@ -1,0 +1,67 @@
+		body {
+			margin: 5px;
+			width: 300px;
+			padding: 0px auto;
+			font-family: Helvetica, Arial, sans-serif;
+			text-align: center;
+		}
+
+		form {
+			margin: 0;
+			padding: 0;
+		}
+
+		input {
+			width: 198px;
+			padding: 7px;
+			font-size: 16px;
+			background-color: rgba(0, 0, 0, 0);
+			color: #2A7FFF;
+			border: 3px solid #2A7FFF;
+			border-radius: 20px;
+			transition: 0.7s color ease, 0.7s background ease, 1s border-radius cubic-bezier(0.07, 2.42, 0.5, 0.97);
+		}
+
+		input:hover,
+		input:active,
+		input:focus {
+			color: #ffffff;
+			background-color: rgba(42, 127, 255, 0.9);
+			border-radius: 10px;
+		}
+
+		button {
+			padding: 7px;
+			font-size: 16px;
+			background-color: rgba(0, 0, 0, 0);
+			color: #2A7FFF;
+			border: 3px solid #2A7FFF;
+			border-radius: 20px;
+			transition: 0.7s color ease, 0.7s background ease, 1s border-radius cubic-bezier(0.07, 2.42, 0.5, 0.97);
+		}
+
+		button:hover,
+		button:active,
+		button:focus {
+			color: #ffffff;
+			background-color: rgba(42, 127, 255, 0.9);
+			border-radius: 10px;
+		}
+
+		a {
+			margin: 0px;
+			padding: 0px;
+			font-size: 16px;
+			color: #2A7FFF;
+			text-decoration: none;
+			font-weight: bold;
+			border-bottom: 2px dashed transparent;
+			transition: 1s color ease, 1s border ease;
+		}
+		
+		a:hover,
+		a:active,
+		a:focus {
+			color: #2A7FFF;
+			border-bottom: 2px dashed #2A7FFF;
+		}
