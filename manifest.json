@@ -1,0 +1,15 @@
+{
+	"name": "Where Have I Been",
+	"version": "0.1",
+	"description": "Track your Google Chrome history in a Google Sheet",
+	"permissions": [
+		"storage"
+	],
+	"background": {
+		"scripts": [
+			"install.js"
+		],
+		"persistent": false
+	},
+	"manifest_version": 2
+}
