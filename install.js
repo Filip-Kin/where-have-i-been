@@ -1,4 +1,6 @@
 chrome.runtime.onInstalled.addListener(function() {
+
+	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
 		if (!data.hasOwnProperty("deviceName")) {
 			chrome.storage.local.set({ deviceName: 'Unknown' }, function() {
@@ -8,6 +10,8 @@ chrome.runtime.onInstalled.addListener(function() {
 			console.log("Storage already initiated, deviceName = " + data.deviceName);
 		}
 	});
+
+	//Get history from before install
 	chrome.storage.local.get("history", function(data) {
 		if(!data.hasOwnProperty("history")) {
 			var query = { 
@@ -46,6 +50,8 @@ chrome.runtime.onInstalled.addListener(function() {
 			console.log("History storage already initiated, id = " + data.history);
 		}
 	});
+
+	//Popup
 	chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
 		chrome.declarativeContent.onPageChanged.addRules([{
 			conditions: [new chrome.declarativeContent.PageStateMatcher({
@@ -55,4 +61,5 @@ chrome.runtime.onInstalled.addListener(function() {
 			actions: [new chrome.declarativeContent.ShowPageAction()]
 		}]);
 	});
+
 });
