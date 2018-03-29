@@ -14,18 +14,6 @@ if ($device == "") {
 if ($history == "") {
   array_push($status[1], "History not present");
 }
-// Test data
-/*$status[1] = [];
-$device = 'Test';
-$email = 'filipkinjan@gmail.com';
-$history = json_decode('[{
-    "id": "61161",
-    "title": "Filip Kin",
-    "url": "https://filipkin.com/",
-    "direct": false,
-    "visits": 1,
-    "time": "2018-03-28 00:00:10"
-}]');*/
 if ($status[1] == []) {
   $status[0] = "processing";
   $jsonstr = '{"device": "'.$device.'", "email": "'.$email.'", "history": []}';
