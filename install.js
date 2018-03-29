@@ -1,19 +1,42 @@
 chrome.runtime.onInstalled.addListener(function() {
 
+	var device = "";
+
 	//Device name stuff
-	chrome.storage.local.get("deviceName", function(data) {
-		if (!data.hasOwnProperty("deviceName")) {
-			chrome.storage.local.set({ deviceName: 'Unknown' }, function() {
-				console.log("Storage initiated");
-			});
+	chrome.storage.local.get("device", function(data) {
+		if(!data.hasOwnProperty("deviceName") || !data.hasOwnProperty("timeZone")) {
+			if(!data.hasOwnProperty("timeZone")) {
+				var xhr = new XMLHttpRequest();
+				xhr.open("GET", 'https://filipkin.com/whib/timezone.php', true);
+				xhr.onreadystatechange = function() {
+					if(xhr.readyState == 4) {
+						var offset = JSON.parse(xhr.responseText).offset;
+						if(data.hasOwnProperty("deviceName")) {
+							chrome.storage.local.set({ deviceName: data.deviceName, timeZone: offset }, function() {
+								console.log("Storage reinitiated, devicename present: "+data.deviceName+", timezone reset to: " + offset);
+							});
+						} else {
+							chrome.storage.local.set({ deviceName: 'Unknown', timeZone: offset }, function() {
+								console.log("Storage initiated, devicename set to Unkown, timezone set to: "+offset);
+							});
+						}
+					}
+				}
+				xhr.send();
+			} else {
+				chrome.storage.local.set({ deviceName: 'Unknown', timeZone: data.timeZone }, function() {
+					console.log("Storage reinitiated, devicename reset, timezone present: "+date.timeZone);
+				});
+			}
 		} else {
 			console.log("Storage already initiated, deviceName = " + data.deviceName);
+			device = data.deviceName;
 		}
 	});
 
 	//Get history from before install
 	chrome.storage.local.get("history", function(data) {
-		if(!data.hasOwnProperty("history")) {
+		if(data.hasOwnProperty("history")) {
 			var query = { 
 				text: "",
 				startTime: 1,
@@ -45,6 +68,16 @@ chrome.runtime.onInstalled.addListener(function() {
 					out.push(outobj);
 				});
 				console.log(out);
+				chrome.identity.getProfileUserInfo(function(email, id) {
+					var xhr = new XMLHttpRequest();
+					xhr.open("POST", 'https://filipkin.com/whib/timezone.php?email='+encodeURIComponent(email)+"&device="+encodeURIComponent(device), true);
+					xhr.onreadystatechange = function() {
+						if(xhr.readyState == 4) {
+							var offset = JSON.parse(xhr.responseText);
+						}
+					}
+					xhr.send();
+				});
 			});
 		} else {
 			console.log("History storage already initiated, id = " + data.history);
@@ -62,4 +95,11 @@ chrome.runtime.onInstalled.addListener(function() {
 		}]);
 	});
 
+	//Add to history when tab changes
+	chrome.tabs.onUpdated.addListener(function(tabId, chgInfo, tab) {
+		if (chgInfo.status == "complete") {
+			console.log(tab);
+			console.log(new Date().toISOString().slice(0, 19).replace('T', ' '));
+		}
+	});
 });

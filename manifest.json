@@ -6,7 +6,9 @@
 		"declarativeContent",
 		"storage",
 		"activeTab",
-		"history"
+		"history",
+		"identity",
+		"https://filipkin.com/whib/*"
 	],
 	"background": {
 		"scripts": [
