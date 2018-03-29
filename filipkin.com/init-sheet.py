@@ -20,7 +20,7 @@ sheets = gc.list_spreadsheet_files()
 sheetfound = False
 for i in sheets:
     if i['name'] == user:
-        print('{"url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
+        print('{"status": "exists", "url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
         sheetfound = True
         #gc.del_spreadsheet(i['id'])
         break
@@ -51,5 +51,5 @@ if sheetfound == False:
     sheets = gc.list_spreadsheet_files()
     for i in sheets:
         if i['name'] == user:
-            print('{"url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
+            print('{"status": "created", "url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
             break
