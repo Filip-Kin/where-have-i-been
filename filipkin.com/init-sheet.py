@@ -22,7 +22,6 @@ for i in sheets:
     if i['name'] == user:
         print('{"status": "exists", "url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
         sheetfound = True
-        #gc.del_spreadsheet(i['id'])
         break
 if sheetfound == False:
     sh = gc.create(user)
@@ -48,8 +47,4 @@ if sheetfound == False:
         ws.update_acell('E'+str(z), str(x['direct']))
         ws.update_acell('F'+str(z), str(x['visits']))
         ws.update_acell('G'+str(z), str(x['id']))
-    sheets = gc.list_spreadsheet_files()
-    for i in sheets:
-        if i['name'] == user:
-            print('{"status": "created", "url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
-            break
+    print('{"status": "created", "url": "https://docs.google.com/spreadsheets/d/'+sh.id+'"}')
