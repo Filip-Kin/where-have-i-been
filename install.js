@@ -73,7 +73,18 @@ chrome.runtime.onInstalled.addListener(function() {
 					xhr.open("POST", 'https://filipkin.com/whib/timezone.php?email='+encodeURIComponent(email)+"&device="+encodeURIComponent(device), true);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
-							var offset = JSON.parse(xhr.responseText);
+							var out = JSON.parse(xhr.responseText);
+							if (out.status[0] == "exists") {
+								console.log("History storage already initiated, id = " + json.status[1])
+								chrome.storage.local.set({history: json.status[1]}, function() {
+								}
+							} else if (out.status[0] == "created") {
+								console.log("History storage initiated, id = " + json.status[1])
+								chrome.storage.local.set({history: json.status[1]}, function() {
+								}
+							} else {
+								console.log("History init failed: " + JSON.stringify(json.status))
+							}
 						}
 					}
 					xhr.send();
