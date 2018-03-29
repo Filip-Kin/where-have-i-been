@@ -20,7 +20,7 @@ sheets = gc.list_spreadsheet_files()
 sheetfound = False
 for i in sheets:
     if i['name'] == user:
-        print('{"status": "exists", "url": "https://docs.google.com/spreadsheets/d/'+i['id']+'"}')
+        print('{"status": "exists", "url": "'+i['id']+'"}')
         sheetfound = True
         break
 if sheetfound == False:
@@ -47,4 +47,4 @@ if sheetfound == False:
         ws.update_acell('E'+str(z), str(x['direct']))
         ws.update_acell('F'+str(z), str(x['visits']))
         ws.update_acell('G'+str(z), str(x['id']))
-    print('{"status": "created", "url": "https://docs.google.com/spreadsheets/d/'+sh.id+'"}')
+    print('{"status": "created", "url": "'+sh.id+'"}')
