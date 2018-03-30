@@ -2,7 +2,7 @@
 ini_set("display_errors", "Off");
 $email = $_GET['email'];
 $device = $_GET['device'];
-$history = $_POST['history'];
+$history = json_decode(file_get_contents('php://input'));
 ini_set("display_errors", "On");
 $status = ["failed", []];
 if ($email == "") {
@@ -16,11 +16,11 @@ if ($history == "") {
 }
 if ($status[1] == []) {
   $status[0] = "processing";
-  $jsonstr = '{"device": "'.$device.'", "email": "'.$email.'", "history": []}';
-  $jsonout = json_decode($jsonstr);
-  $jsonout->history = $history;
+  $jsonstr = '{"device": "'.$device.'", "email": "'.$email.'"}';
   $argfile = fopen("argfile.json", "w");
-  fwrite($argfile, json_encode($jsonout, JSON_UNESCAPED_SLASHES));
+  fwrite($argfile, $jsonstr);
+  $histfile = fopen("history.json", "w");
+  fwrite($histfile, json_encode($history));
   $output = shell_exec('python3 init-sheet.py');
   $cleanout = str_replace("\n", "", $output);
   $status[0] = json_decode($cleanout)->status;

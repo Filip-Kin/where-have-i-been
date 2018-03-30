@@ -1,6 +1,6 @@
 {
 	"name": "Where Have I Been",
-	"version": "0.1",
+	"version": "0.2",
 	"description": "Track your Google Chrome history in a Google Sheet",
 	"permissions": [
 		"declarativeContent",
@@ -8,6 +8,7 @@
 		"activeTab",
 		"history",
 		"identity",
+		"identity.email",
 		"https://filipkin.com/whib/*"
 	],
 	"background": {

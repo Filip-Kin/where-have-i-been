@@ -1,12 +1,14 @@
 chrome.runtime.onInstalled.addListener(function() {
 
 	var device = "";
+	var tzOffset = 0;
 
 	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
 		if(!data.hasOwnProperty("deviceName")) {
 			chrome.storage.local.set({ deviceName: 'Unknown' }, function() {
 				console.log("Storage reinitiated, devicename reset to Unknown");
+				device = 'Unknown';
 			});
 		} else {
 			console.log("Storage already initiated, deviceName = " + data.deviceName);
@@ -14,28 +16,10 @@ chrome.runtime.onInstalled.addListener(function() {
 		}
 	});
 
-	//Timezone stuff
-	chrome.storage.local.get("timeZone", function(data) {
-		if(!data.hasOwnProperty("timeZone")) {
-			var xhr = new XMLHttpRequest();
-			xhr.open("GET", 'https://filipkin.com/whib/timezone.php', true);
-			xhr.onreadystatechange = function() {
-				if(xhr.readyState == 4) {
-					var offset = JSON.parse(xhr.responseText).offset;
-					chrome.storage.local.set({ timeZone: offset }, function() {
-						console.log("Timezone initiated, timezone set to: " + offset);
-					});
-				}
-			}
-			xhr.send();
-		} else {
-			console.log("Timezone already initiated, offset = " + data.timeZone);
-		}
-	});
 
 	//Get history from before install
 	chrome.storage.local.get("history", function(data) {
-		if(!data.hasOwnProperty("history")) {
+		if(!data.hasOwnProperty("history") && device !== "Unknown" && device !== "") {
 			var query = { 
 				text: "",
 				startTime: 1,
@@ -44,7 +28,6 @@ chrome.runtime.onInstalled.addListener(function() {
 			chrome.history.search(query, function(results) {
 				var out = [];
 				var lasttime = 10000000000000.00;
-				console.log(results);
 				results.forEach(function(obj) {
 					console.debug(obj);
 					var direct = false;
@@ -55,62 +38,60 @@ chrome.runtime.onInstalled.addListener(function() {
 					} else {
 						lasttime = timestamp;
 					}
-					var time = new Date(timestamp).toISOString().slice(0, 19).replace('T', ' ');
+					var t = new Date(timestamp);
+					var tzTime = (t.getHours())+":"+(t.getMinutes())+":"+(t.getSeconds())+" "+(t.getMonth()+1)+"/"+(t.getDate())+"/"+(t.getFullYear());
 					var outobj = {
 						"id": obj.id,
 						"title": obj.title,
 						"url": obj.url,
 						"direct": direct,
 						"visits": obj.visitCount,
-						"time": time
+						"time": tzTime
 					};
 					out.push(outobj);
 				});
 				console.log(out);
-				chrome.identity.getProfileUserInfo(function(email, id) {
+				chrome.identity.getProfileUserInfo(function(id) {
 					var xhr = new XMLHttpRequest();
-					xhr.open("POST", 'https://filipkin.com/whib/init-sheet.php?email='+encodeURIComponent(email)+"&device="+encodeURIComponent(device), true);
+					var json = JSON.stringify(out);
+					xhr.open("POST", 'https://filipkin.com/whib/init-sheet.php?email=' + encodeURIComponent(id.email) + "&device=" + encodeURIComponent(device), true);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
 							var resp = JSON.parse(xhr.responseText);
 							if (resp.status[0] == "exists") {
-								console.log("History storage already initiated, id = " + json.status[1])
-								chrome.storage.local.set({history: json.status[1]}, function() {
+								console.log("History storage already initiated, id = " + resp.status[1])
+								chrome.storage.local.set({history: resp.status[1]}, function() {
 
 								});
 							} else if (resp.status[0] == "created") {
-								console.log("History storage initiated, id = " + json.status[1])
-								chrome.storage.local.set({history: json.status[1]}, function() {
+								console.log("History storage initiated, id = " + resp.status[1])
+								chrome.storage.local.set({history: resp.status[1]}, function() {
 								});
 							} else {
-								console.log("History init failed: " + JSON.stringify(json.status))
+								console.log("History init failed: " + JSON.stringify(resp.status))
 							}
 						}
 					}
-					xhr.send(JSON.stringify(out));
+					xhr.send(json);
 				});
 			});
 		} else {
-			console.log("History storage already initiated, id = " + data.history);
+			if (device == "Unknown" || device == "") {
+				console.log("Device name not changed from default, will not init history");
+			} else {
+				console.log("History storage already initiated, id = " + data.history);
+			}
 		}
 	});
 
-	//Popup
-	chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-		chrome.declarativeContent.onPageChanged.addRules([{
-			conditions: [new chrome.declarativeContent.PageStateMatcher({
-				pageUrl: { hostEquals: "developer.chrome.com" },
-			})
-			],
-			actions: [new chrome.declarativeContent.ShowPageAction()]
-		}]);
-	});
 
 	//Add to history when tab changes
 	chrome.tabs.onUpdated.addListener(function(tabId, chgInfo, tab) {
 		if (chgInfo.status == "complete") {
 			console.log(tab);
-			console.log(new Date().toISOString().slice(0, 19).replace('T', ' '));
+			var t = new Date();
+			var tzTime = (t.getHours()) + ":" + (t.getMinutes()) + ":" + (t.getSeconds()) + " " + (t.getMonth() + 1) + "/" + (t.getDate()) + "/" + (t.getFullYear());
+			console.log(tzTime);
 		}
 	});
 });

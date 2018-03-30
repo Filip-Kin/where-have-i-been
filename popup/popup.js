@@ -7,6 +7,7 @@ chrome.storage.local.get('deviceName', function(data) {
 	console.log(data.deviceName);
 	deviceNameForm.addEventListener("submit", function(evt) {
 		chrome.storage.local.set({ deviceName: deviceNameInput.value }, function(data) {
+			chrome.runtime.reload();
 			return false;
 		});
 	});
