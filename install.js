@@ -2,6 +2,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
 	var device = "";
 	var updateRate = 50;
+	var update = [];
 
 	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
@@ -56,8 +57,6 @@ chrome.runtime.onInstalled.addListener(function() {
 										"id": obj.id,
 										"title": obj.title,
 										"url": obj.url,
-										"direct": direct,
-										"visits": obj.visitCount,
 										"time": tzTime
 									};
 									out.push(outobj);
@@ -98,7 +97,6 @@ chrome.runtime.onInstalled.addListener(function() {
 	});
 
 
-
 	//Update rate stuff
 	chrome.storage.local.get("updateRate", function(data) {
 		if(!data.hasOwnProperty("updateRate")) {
@@ -108,18 +106,56 @@ chrome.runtime.onInstalled.addListener(function() {
 			});
 		} else {
 			console.log("Storage already initiated, updateRate = " + data.updateRate);
-			device = data.updateRate;
+			updateRate = data.updateRate;
 		}
 	});
 
 
+	//Get stored update buffer
+	chrome.storage.local.get("update", function(data) {
+		if(!data.hasOwnProperty("update")) {
+			console.log("Restoring update buffer from last session");
+			update = data.update;
+		} else {
+			console.log("No update buffer to restore");
+			update = [];
+		}
+	});
+
 	//Add to history when tab changes
 	chrome.tabs.onUpdated.addListener(function(tabId, chgInfo, tab) {
 		if (chgInfo.status == "complete") {
+			console.debug(chgInfo);
 			console.debug(tab);
 			var t = new Date();
 			var tzTime = (t.getHours()) + ":" + (t.getMinutes()) + ":" + (t.getSeconds()) + " " + (t.getMonth() + 1) + "/" + (t.getDate()) + "/" + (t.getFullYear());
 			console.debug(tzTime);
+			var outobj = {
+				"id": tab.id,
+				"title": tab.title,
+				"url": tab.url,
+				"time": tzTime
+			};
+			console.debug(outobj);
+			update.push(outobj);
+			chrome.storage.local.set({ update: update }, function() {
+				console.debug('Backed up update buffer');
+			});
+			console.debug(update.length + " " + updateRate);
+			if (update.length >= updateRate) {
+				chrome.identity.getProfileUserInfo(function(id) {
+					var json = JSON.stringify(update);
+					var xhr = new XMLHttpRequest();
+					xhr.open("POST", 'https://filipkin.com/whib/update-sheet.php?email=' + encodeURIComponent(id.email) + '&device=' + encodeURIComponent(device), true);
+					xhr.onreadystatechange = function() {
+						if(xhr.readyState == 4) {
+							var resp = JSON.parse(xhr.responseText);
+							update = [];
+						}
+					}
+					xhr.send(json);
+				});
+			}
 		}
 	});
 });

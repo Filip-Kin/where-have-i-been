@@ -6,6 +6,7 @@
 		"declarativeContent",
 		"storage",
 		"activeTab",
+		"tabs",
 		"history",
 		"identity",
 		"identity.email",
@@ -15,7 +16,7 @@
 		"scripts": [
 			"install.js"
 		],
-		"persistent": false
+		"persistent": true
 	},
 	"browser_action": {
 		"default_popup": "popup/index.html",

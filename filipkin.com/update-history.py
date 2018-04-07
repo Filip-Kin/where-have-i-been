@@ -27,8 +27,8 @@ for i in sheets:
 		break
 if sheetfound == True:
 	ws = gc.open_by_key(sid).sheet1
-	ws.resize(10001, 4)
-	cells = ws.range("A2:E"+str(len(json)+1))
+    rows = ws.row_count
+	cells = ws.range("A"+(rows+1)+":E"+str(len(json)+1))
 	print(str(cells[0]))
 	i = 0
 	for x in json:
