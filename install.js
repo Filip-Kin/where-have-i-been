@@ -62,7 +62,7 @@ chrome.runtime.onInstalled.addListener(function() {
 									};
 									out.push(outobj);
 								});
-								console.log(out);
+								console.debug(out);
 								chrome.identity.getProfileUserInfo(function(id) {
 									var xhr = new XMLHttpRequest();
 									var json = JSON.stringify(out);
@@ -116,10 +116,10 @@ chrome.runtime.onInstalled.addListener(function() {
 	//Add to history when tab changes
 	chrome.tabs.onUpdated.addListener(function(tabId, chgInfo, tab) {
 		if (chgInfo.status == "complete") {
-			console.log(tab);
+			console.debug(tab);
 			var t = new Date();
 			var tzTime = (t.getHours()) + ":" + (t.getMinutes()) + ":" + (t.getSeconds()) + " " + (t.getMonth() + 1) + "/" + (t.getDate()) + "/" + (t.getFullYear());
-			console.log(tzTime);
+			console.debug(tzTime);
 		}
 	});
 });
