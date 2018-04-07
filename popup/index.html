@@ -8,8 +8,14 @@
 <body>
 	<a href="#" id="sheetLink">Where Have I Been</a>
 	<form id="deviceName">
+		<label>Device Name</label>
 		<input id="deviceNameInput" type="text" name="deviceName">
 		<button id="setDeviceName" type="submit">Change</button>
+	</form>
+	<form id="updateRate">
+		<label>Update Rate <span class="fine">update every x website visits</span></label>
+		<input id="updateRateInput" type="number" name="updateRate" min="10">
+		<button id="setUpdateRate" type="submit">Change</button>
 	</form>
 	<script src="popup.js"></script>
 </body>

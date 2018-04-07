@@ -1,6 +1,7 @@
 chrome.runtime.onInstalled.addListener(function() {
 
 	var device = "";
+	var updateRate = 50;
 
 	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
@@ -93,6 +94,21 @@ chrome.runtime.onInstalled.addListener(function() {
 			});
 		} else {
 			console.log("History storage already initiated, id = " + data.history);
+		}
+	});
+
+
+
+	//Update rate stuff
+	chrome.storage.local.get("updateRate", function(data) {
+		if(!data.hasOwnProperty("updateRate")) {
+			chrome.storage.local.set({ updateRate: 50 }, function() {
+				console.log("Storage reinitiated, updaterate reset to 50 websites");
+				updateRate = 50;
+			});
+		} else {
+			console.log("Storage already initiated, updateRate = " + data.updateRate);
+			device = data.updateRate;
 		}
 	});
 
