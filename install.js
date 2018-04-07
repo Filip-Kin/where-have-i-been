@@ -22,7 +22,6 @@ chrome.runtime.onInstalled.addListener(function() {
 		if(!data.hasOwnProperty("history")) {
 			chrome.identity.getProfileUserInfo(function(id) {
 				var xhr = new XMLHttpRequest();
-				var json = JSON.stringify(out);
 				xhr.open("POST", 'https://filipkin.com/whib/get-sheet.php?email=' + encodeURIComponent(id.email), true);
 				xhr.onreadystatechange = function() {
 					if(xhr.readyState == 4) {
@@ -91,7 +90,7 @@ chrome.runtime.onInstalled.addListener(function() {
 						}
 					}
 				}
-				xhr.send(json);
+				xhr.send();
 			});
 		} else {
 			console.log("History storage already initiated, id = " + data.history);
