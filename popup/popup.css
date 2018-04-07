@@ -55,7 +55,7 @@ a {
 	color: #2A7FFF;
 	text-decoration: none;
 	font-weight: bold;
-	border-bottom: 2px dashed transparent;
+	border-bottom: 2px solid rgba(42, 127, 255, 0.1);
 	transition: 1s color ease, 1s border ease;
 }
 
