@@ -1,7 +1,6 @@
 chrome.runtime.onInstalled.addListener(function() {
 
 	var device = "";
-	var tzOffset = 0;
 
 	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
