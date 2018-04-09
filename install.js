@@ -2,7 +2,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
 	var device = "";
 	var updateRate = 50;
-	var update = [];
+	var updatequeue = [];
 
 	//Device name stuff
 	chrome.storage.local.get("deviceName", function(data) {
@@ -111,14 +111,13 @@ chrome.runtime.onInstalled.addListener(function() {
 	});
 
 
-	//Get stored update buffer
-	chrome.storage.local.get("update", function(data) {
-		if(!data.hasOwnProperty("update")) {
-			console.log("Restoring update buffer from last session");
-			update = data.update;
+	//Get stored updatequeue buffer
+	chrome.storage.local.get("updatequeue", function(data) {
+		if(!data.hasOwnProperty("updatequeue")) {
+			console.log("Restoring updatequeue buffer from last session");
+			updatequeue = data.updatequeue;
 		} else {
-			console.log("No update buffer to restore");
-			update = [];
+			console.log("No updatequeue buffer to restore");
 		}
 	});
 
@@ -137,20 +136,21 @@ chrome.runtime.onInstalled.addListener(function() {
 				"time": tzTime
 			};
 			console.debug(outobj);
-			update.push(outobj);
-			chrome.storage.local.set({ update: update }, function() {
-				console.debug('Backed up update buffer');
+			console.debug(updatequeue);
+			updatequeue.push(outobj);
+			chrome.storage.local.set({ updatequeue: updatequeue }, function() {
+				console.debug('Backed up updatequeue buffer');
 			});
-			console.debug(update.length + " " + updateRate);
-			if (update.length >= updateRate) {
+			console.debug(updatequeue.length + " " + updateRate);
+			if (updatequeue.length >= updateRate) {
 				chrome.identity.getProfileUserInfo(function(id) {
-					var json = JSON.stringify(update);
+					var json = JSON.stringify(updatequeue);
 					var xhr = new XMLHttpRequest();
 					xhr.open("POST", 'https://filipkin.com/whib/update-sheet.php?email=' + encodeURIComponent(id.email) + '&device=' + encodeURIComponent(device), true);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
 							var resp = JSON.parse(xhr.responseText);
-							update = [];
+							updatequeue = [];
 						}
 					}
 					xhr.send(json);
