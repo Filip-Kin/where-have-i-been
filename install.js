@@ -143,10 +143,10 @@ chrome.runtime.onInstalled.addListener(function() {
 			});
 			console.debug(updatequeue.length + " " + updateRate);
 			if (updatequeue.length >= updateRate) {
-				chrome.identity.getProfileUserInfo(function(id) {
+				chrome.storage.local.get('history', function(data) {
 					var json = JSON.stringify(updatequeue);
 					var xhr = new XMLHttpRequest();
-					xhr.open("POST", 'https://filipkin.com/whib/update-sheet.php?email=' + encodeURIComponent(id.email) + '&device=' + encodeURIComponent(device), true);
+					xhr.open("POST", 'https://filipkin.com/whib/update-sheet.php?id=' + encodeURIComponent(data.history) + '&device=' + encodeURIComponent(device), true);
 					xhr.onreadystatechange = function() {
 						if(xhr.readyState == 4) {
 							var resp = JSON.parse(xhr.responseText);

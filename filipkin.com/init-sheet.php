@@ -25,6 +25,7 @@ if ($status[1] == []) {
   $cleanout = str_replace("\n", "", $output);
   $status[0] = json_decode($cleanout)->status;
   $status[1] = json_decode($cleanout)->url;
+  $status[2] = $cleanout;
 }
 echo '{"email": "'.$email.'", "status": '.json_encode($status, JSON_UNESCAPED_SLASHES).'}';
 ?>

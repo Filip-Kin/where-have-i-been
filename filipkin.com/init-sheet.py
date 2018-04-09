@@ -4,6 +4,7 @@ from pprint import pprint
 import os
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from subprocess import Popen
 
 json = json.load(open('argfile.json'))
 
@@ -14,7 +15,6 @@ creds = ServiceAccountCredentials.from_json_keyfile_name('client-id.json', scope
 gc = gspread.authorize(creds)
 
 user = json['email']
-device = json['device']
 
 sheets = gc.list_spreadsheet_files()
 
@@ -30,12 +30,10 @@ if sheetfound == False:
     ws = sh.get_worksheet(0)
     row = []
     row.append('Device')
-    row.append('Visit')
+    row.append('Time')
     row.append('Site')
     row.append('URL')
-    row.append('Direct')
-    row.append('Visits')
     row.append('ID')
     ws.append_row(row)
-    os.system("python3 history.py "+sh.id)
     print('{"status": "created", "url": "'+sh.id+'"}')
+    Popen(['python3', 'history.py', sh.id])

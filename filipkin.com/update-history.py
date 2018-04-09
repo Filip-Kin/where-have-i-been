@@ -5,6 +5,7 @@ import sys
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
+args = json.load(open('argfile.json'))
 json = json.load(open('history.json'))
 
 scope = [
@@ -15,8 +16,8 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(
  'client-id.json', scope)
 gc = gspread.authorize(creds)
 
-sid = sys.argv[1]
-device = sys.argv[2]
+sid = args['sid']
+device = args['device']
 
 sheets = gc.list_spreadsheet_files()
 
@@ -27,12 +28,13 @@ for i in sheets:
 		break
 if sheetfound == True:
 	ws = gc.open_by_key(sid).sheet1
-    rows = ws.row_count
-	cells = ws.range("A"+(rows+1)+":E"+str(len(json)+1))
-	print(str(cells[0]))
+	rows = ws.row_count
+	cellrange = "A"+str(rows+1)+":E"+str(len(json)+rows)
+	ws.resize(len(json)+rows, 5)
+	cells = ws.range(cellrange)
 	i = 0
 	for x in json:
-		print('Row: '+str(i/7))
+		print('Row: '+str(i/5))
 		cells[i].value = (str(device))[:49999]
 		i = i + 1
 		cells[i].value = (str(x['time']))[:49999]
