@@ -113,7 +113,7 @@ chrome.runtime.onInstalled.addListener(function() {
 
 	//Get stored updatequeue buffer
 	chrome.storage.local.get("updatequeue", function(data) {
-		if(!data.hasOwnProperty("updatequeue")) {
+		if(data.hasOwnProperty("updatequeue")) {
 			console.log("Restoring updatequeue buffer from last session");
 			updatequeue = data.updatequeue;
 		} else {
